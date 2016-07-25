@@ -1,36 +1,38 @@
-$main-margin :15;
-$main-gutter :30;
-$one-column:75px;
-$one-column-responsive:53px;
-$padding20: 0px 0 20px 0 ;
-$margin15-15:0 15px 20px 15px;
-$border-on: 1px solid #e5e5e5;
-$border-off: 1px solid #ffffff;
-$numbers-columns: 12;
+$grid-name: grid; 
+$column-count: 12; 
+$grid-width: 1264; 
+$column-margin: 20;
+$grid-type: fixed; // fixed (px), fluid(%).
 
-.content {margin: 0 auto; float: none; position: relative;}
+$column-width-pixels: ($grid-width - ($column-margin * ($column-count - 1))) / $column-count;
+$column-width-percentage: (($grid-width - ($column-margin * ($column-count - 1))) / $column-count) / $grid-width * 100%;
+$column-margin-percentage: $column-margin / $grid-width * 100%;
 
-.no_border {border-bottom: $border-off;}
-.border_top {border-top: $border-on;}
-
-@for $i from 1 through ($numbers-columns) { .grid_#{$i} {width: $one-column*($i)+($main-gutter*($i)-($main-gutter));} }
-@for $i from 1 through ($numbers-columns) { .faixa_#{$i} {width: $one-column*($i)+($main-gutter*($i));} }
-
-%gridstyle { padding:$padding20; border-bottom: $border-on; margin:$margin15-15;}
-@for $i from 1 through ($numbers-columns) { .grid_#{$i} { @extend %gridstyle; }}
-
-%floats { float: left;}
-@for $i from 1 through ($numbers-columns) { .faixa_#{$i}, .grid_#{$i} { @extend %floats; }}
-
-%tables {content: "";display: table;}
-@for $i from 1 through ($numbers-columns) { .faixa_#{$i}:after, .grid_#{$i}:after, .faixa_#{$i}:before, .grid_#{$i}:before { @extend %tables; }}
-
-%bothes {clear: both;}
-@for $i from 1 through ($numbers-columns) { .faixa_#{$i}:after, .grid_#{$i}:after { @extend %bothes; }}
-
-
-@media screen and (max-width: 1279px) {
-@for $i from 1 through ($numbers-columns) { .grid_#{$i} {width: $one-column-responsive*($i)+($main-gutter*($i)-($main-gutter));} }
-@for $i from 1 through ($numbers-columns) { .faixa_#{$i} {width: $one-column-responsive*($i)+($main-gutter*($i));} }
+.#{$grid-name}-1{
+	@if ($grid-type == 'fluid') {
+		width: $column-width-percentage;
+	}
+	@elseif ($grid-type == 'fixed'){
+		width: $column-width-pixels + px;
+	}
 }
 
+@for $i from 2 through ($column-count - 1){
+	.#{$grid-name}-#{$i}{
+		@if ($grid-type == 'fluid') {
+			width: $column-width-percentage * $i + $column-margin-percentage * ($i - 1);
+		}
+		@elseif ($grid-type == 'fixed'){
+			width: ($column-width-pixels * $i) + ($column-margin * ($i - 1)) + px;
+		}
+	}
+}
+
+.#{$grid-name}-#{$column-count}{
+	@if ($grid-type == 'fluid') {
+		width: 100%;
+	}
+	@elseif ($grid-type == 'fixed'){
+		width: $grid-width + px
+	}
+}
